@@ -1,10 +1,14 @@
 {
-  "name": ".NET Development Environment",
+  "name": ".NET High-Performance Environment",
   "image": "mcr.microsoft.com/devcontainers/dotnet:8.0",
+  "hostRequirements": {
+    "cpus": 8,
+    "memory": "16gb"
+  },
   "customizations": {
     "vscode": {
       "extensions": [
-       "ms-dotnettools.csdevkit",
+        "ms-dotnettools.csdevkit",
         "ms-dotnettools.csharp",
         "ms-dotnettools.vscode-dotnet-runtime",
         "GitHub.copilot",
@@ -19,4 +23,3 @@
     }
   }
 }
-
