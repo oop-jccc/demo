@@ -1,4 +1,4 @@
-name: .NET CI
+name: Assignment Auto-Grader
 
 on:
   push:
@@ -7,75 +7,38 @@ on:
     branches: [ "main", "master", "develop" ]
 
 jobs:
-  build:
+  grade-assignment:
     runs-on: ubuntu-latest
-    
-    strategy:
-      matrix:
-        dotnet-version: ['8.0.x']
 
     steps:
     - uses: actions/checkout@v4
-    
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: ${{ matrix.dotnet-version }}
-        
-    - name: Restore dependencies
-      run: dotnet restore demo/demo.sln
-      
-    - name: Build
-      run: dotnet build demo/demo.sln --no-restore --configuration Release
-      
-    - name: Test
-      run: dotnet test demo/demo.sln --no-build --configuration Release --verbosity normal
-      
-    - name: Publish
-      run: dotnet publish demo/demo.csproj --no-build --configuration Release --output ./publish
-      
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: published-app
-        path: ./publish
 
-  build-windows:
-    runs-on: windows-latest
-    
-    steps:
-    - uses: actions/checkout@v4
-    
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '8.0.x'
-        
-    - name: Restore dependencies
-      run: dotnet restore demo/demo.sln
-      
-    - name: Build
-      run: dotnet build demo/demo.sln --no-restore --configuration Release
-      
-    - name: Test
-      run: dotnet test demo/demo.sln --no-build --configuration Release --verbosity normal
 
-  build-macos:
-    runs-on: macos-latest
-    
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '8.0.x'
-        
     - name: Restore dependencies
       run: dotnet restore demo/demo.sln
-      
+
     - name: Build
       run: dotnet build demo/demo.sln --no-restore --configuration Release
-      
-    - name: Test
-      run: dotnet test demo/demo.sln --no-build --configuration Release --verbosity normal
+
+    - name: Run program and check output
+      run: |
+        echo "Running the program..."
+        output=$(dotnet run --project demo/demo.csproj --configuration Release)
+        echo "Program output: '$output'"
+
+        # Check if output contains "Hello, World!" (with exclamation mark)
+        if [[ "$output" == *"Hello, World!"* ]]; then
+          echo "✅ SUCCESS: Program outputs 'Hello, World!' correctly!"
+          echo "🎉 Assignment completed successfully!"
+        else
+          echo "❌ FAILURE: Program output does not contain 'Hello, World!' with exclamation mark"
+          echo "Expected: Hello, World!"
+          echo "Got: $output"
+          echo ""
+          echo "💡 Hint: Make sure to add an exclamation mark (!) to the end of 'Hello, World' in Program.cs"
+          exit 1
+        fi
