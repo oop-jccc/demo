@@ -1,5 +1,5 @@
 {
-  "name": ".NET Medium-Performance Environment",
+  "name": ".NET High-Performance Environment",
   "image": "mcr.microsoft.com/devcontainers/dotnet:8.0",
   "hostRequirements": {
     "cpus": 4,
@@ -21,5 +21,8 @@
         "humao.rest-client"
       ]
     }
-  }
+  },
+  "forwardPorts": [],
+  "postCreateCommand": "dotnet restore demo/demo.csproj",
+  "remoteUser": "vscode"
 }
